@@ -38,7 +38,7 @@ function move!(obj::Object, ax, ay)
     obj.y += obj.vy * dt
 end
 
-function main()
+function calc()
     data = Array{Float64, 2}(undef, 13, 0)
     time_launch = 0 * period_moon / 48
     moon_rad = (2 * pi / period_moon) * time_launch
@@ -78,6 +78,11 @@ function main()
             data = hcat(data, [n, time / day, moon.x, moon.y, moon.vx, moon.vy, sc.x, sc.y, sc.vx, sc.vy, r_se, r_sm, etot_sc])
         end
     end
+    return data
+end
+
+function main()
+    data = calc()
 end
 
 main()
