@@ -2,8 +2,10 @@
 # lunar swing-by
 =#
 
+using Plots
+
 const dt = 1e-1
-const num_of_output = 1000
+const num_of_output = 3
 const time_end = 5.0e6
 const G = 6.672e-11
 
@@ -81,8 +83,18 @@ function calc()
     return data
 end
 
+function savedata(data)
+    println(data)
+    open("data.dat", "w") do fp
+        for i in data
+            println(fp, join(i, " "))
+        end
+    end
+end
+
 function main()
     data = calc()
+    # savedata(data)
 end
 
 main()
