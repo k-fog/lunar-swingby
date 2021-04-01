@@ -1,14 +1,16 @@
 #=
-# moon swing-by
+# lunar swing-by
 =#
 
+using Plots
+
 const dt = 1e-1
-const num_of_output = 1000
+const num_of_output = 3
 const time_end = 5.0e6
 const G = 6.672e-11
 
 const day = 24.0 * 3600
-const dtout = parse(Int, time_end / (dt * num_of_output))
+const dtout = round(time_end / (dt * num_of_output))
 
 const mass_earth = 5.974e24
 const mass_moon = 7.340e22
@@ -38,8 +40,8 @@ function move!(obj::Object, ax, ay)
     obj.y += obj.vy * dt
 end
 
-function main()
-    data = []
+function calc()
+    data = Array{Float64, 2}(undef, 13, 0)
     time_launch = 0 * period_moon / 48
     moon_rad = (2 * pi / period_moon) * time_launch
     moon = Object(orb_moon * cos(moon_rad), orb_moon * sin(moon_rad), velc_moon * -sin(moon_rad), velc_moon * cos(moon_rad))
@@ -75,9 +77,25 @@ function main()
         n += 1
 
         if n % dtout == 1
-            append!(data, [])
+            data = hcat(data, [n, time / day, moon.x, moon.y, moon.vx, moon.vy, sc.x, sc.y, sc.vx, sc.vy, r_se, r_sm, etot_sc])
         end
     end
+    return data
+end
+
+function savedata(data)
+    println(data)
+    open("data.dat", "w") do fp
+        for i in data
+            println(fp, join(i, " "))
+        end
+    end
+end
+
+function main()
+    data = calc()
+    # savedata(data)
+    plot!(data)
 end
 
 main()
