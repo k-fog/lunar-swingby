@@ -1,11 +1,10 @@
-#=
-# lunar swing-by
-=#
+#= 
+# lunar swing-by =#
 
 using Plots
 
 const dt = 1e-1
-const num_of_output = 3
+const num_of_output = 100
 const time_end = 5.0e6
 const G = 6.672e-11
 
@@ -41,7 +40,7 @@ function move!(obj::Object, ax, ay)
 end
 
 function calc()
-    data = Array{Float64, 2}(undef, 13, 0)
+    data = Array{Float64,2}(undef, 13, 0)
     time_launch = 0 * period_moon / 48
     moon_rad = (2 * pi / period_moon) * time_launch
     moon = Object(orb_moon * cos(moon_rad), orb_moon * sin(moon_rad), velc_moon * -sin(moon_rad), velc_moon * cos(moon_rad))
@@ -51,9 +50,9 @@ function calc()
 
     n = 1
     while time < time_end
-        r_me_sq = moon.x ^ 2 + moon.y ^ 2
-        r_se_sq = sc.x ^ 2 + sc.y ^ 2
-        r_sm_sq = (moon.x - sc.x) ^ 2 + (moon.y - sc.y) ^ 2
+        r_me_sq = moon.x^2 + moon.y^2
+        r_se_sq = sc.x^2 + sc.y^2
+        r_sm_sq = (moon.x - sc.x)^2 + (moon.y - sc.y)^2
         r_me = sqrt(r_me_sq)
         r_se = sqrt(r_se_sq)
         r_sm = sqrt(r_sm_sq)
@@ -69,7 +68,7 @@ function calc()
         move!(sc, a_c_x, a_c_y)
 
         # energy
-        k = (sc.vx ^ 2 + sc.vy ^ 2) / 2
+        k = (sc.vx^2 + sc.vy^2) / 2
         u = -G * (mass_earth / r_se) - G * (mass_moon / r_sm)
         etot_sc = k + u
 
@@ -92,9 +91,22 @@ function savedata(data)
     end
 end
 
+function visualize(data)
+    plt = plot(
+        1,
+        xlim=(-1e9, 1e9),
+        ylim=(-1e9, 1e9),
+        aspect_ratio=:equal,
+    )
+    @animate for i in 1:size(data, 2)
+        push!(plt, data[3, i], data[4, i])
+    end
+end
+
 function main()
     data = calc()
+    gif(visualize(data))
     # savedata(data)
 end
 
-main()
+@time main()
