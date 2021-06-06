@@ -97,9 +97,11 @@ function visualize(data)
         xlim=(-1e9, 1e9),
         ylim=(-1e9, 1e9),
         aspect_ratio=:equal,
+        seriestype=:scatter,
     )
     @animate for i in 1:size(data, 2)
         push!(plt, data[3, i], data[4, i])
+        push!(plt, data[7, i], data[8, i])
     end
 end
 
